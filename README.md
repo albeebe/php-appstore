@@ -1,4 +1,4 @@
-php-appstore-matrix
+php-appstore
 ===================
 
 PHP class with a bunch of functions to retrieve app ratings from the App Store
