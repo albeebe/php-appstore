@@ -12,7 +12,7 @@ I created this script so i could keep up to date on my apps reviews.<BR><BR>You 
 <PRE>
 include ("appstore.inc.php");
 
-$appID = "577499909"
+$appID = "577499909" // Angry Birds
 
 $_APPSTORE = new APPSTORE($appID);
 $arrReviews = $_APPSTORE->reviewsForPage(0);
