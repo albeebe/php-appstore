@@ -29,31 +29,24 @@ DEALINGS IN THE SOFTWARE.
 	// Includes
 	include ("appstore.inc.php");
 	
-	// Set the APP ID we want to get reviews for
-	$appID = $_GET["id"];
-	if (strlen($appID) == 0) $appID = "577499909";
+	// Set the USER ID we want to get reviews for
+	$userID = $_GET["id"];
 	
-	// Download the most recent reviews
-	$_APPSTORE = new APPSTORE($appID);
-	$arrReviews = $_APPSTORE->reviewsForPage(0);
-	$appName = $_APPSTORE->appName();
-	$appIcon = $_APPSTORE->appIcon();
-	$appDeveloper = $_APPSTORE->appDeveloper();
-	$appTotalStars = $_APPSTORE->appTotalStars();
-	$appTotalRatings = $_APPSTORE->appTotalRatings();
-	$appCurrentStars = $_APPSTORE->appCurrentStars();
-	$appCurrentRatings = $_APPSTORE->appCurrentRatings();
-	$appCategoryName = $_APPSTORE->appCategoryName();
-	$appCategoryID = $_APPSTORE->appCategoryID();
-	$appRankCategory = $_APPSTORE->appRankCategory();
-	$appRankCategoryGrossing = $_APPSTORE->appRankCategoryGrossing();
-	 
-	$appName = htmlentities($appName);
-	$appDeveloper = htmlentities($appDeveloper);
+	// Download the users most recent reviews
+	$_APPSTORE = new APPSTORE();
+	$arrReviews = array();
+	for ($x = 0; $x < 5; $x++) {
+		$arrReviewPage = $_APPSTORE->userReviewsForPage($userID, $x);
+		if (sizeof($arrReviewPage) == 0) {
+			break;
+		} else {
+			$arrReviews = array_merge($arrReviews, $arrReviewPage);
+		}
+	}
 ?>
 <HTML>
 	<HEAD>
-		<TITLE><?= $appName; ?></TITLE>
+		<TITLE><?= htmlentities($_GET["username"]); ?></TITLE>
 		<META name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -62,30 +55,6 @@ DEALINGS IN THE SOFTWARE.
 			body {
 				margin: 0px;
 				font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			}
-			
-			div.app-header {
-				padding: 15px; 
-				background-color: #f5f5f5;
-			}
-			
-			div.app-header-shadow {
-				height: 4px;
-				background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%); /* FF3.6+ */
-				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
-				background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
-				background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
-				background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* IE10+ */
-				background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%); /* W3C */
-				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
-			}
-			
-			img.app-icon {
-				width: 77px;
-				height: 77px;
-				border-radius: 15px;
-				-webkit-border-radius: 15px;
-				-moz-border-radius: 15px;
 			}
 			
 			div.app-title {
@@ -100,25 +69,20 @@ DEALINGS IN THE SOFTWARE.
 				font-size: 13px;
 				text-shadow: 0px 1px #ffffff;
 			}
-			
-			div.app-rating {
-				margin-top: 10px;
-				color: #6a6a6a;
+				
+			div.comment-box-title {
+				color: #4c4c4c;
+				font-size: 13;
 				font-weight: bold;
-				font-size: 11px;
-			}
-			
-			div.app-rankings {
-				margin-top: 10px;
-				color: #646464;
-				font-size: 11px;
+				margin-bottom: 10px;
 				text-shadow: 0px 1px #ffffff;
 			}
 			
-			span.app-ranking-value {
-				color: #6a6a6a;
-				font-weight: bold;
-				font-size: 11px;
+			div.comment-box-review {
+				color: #4c4c4c;
+				font-size: 13;
+				margin-top: 10px;
+				text-shadow: 0px 1px #ffffff;
 			}
 			
 			div.comment-box {	
@@ -135,27 +99,21 @@ DEALINGS IN THE SOFTWARE.
 				background-color: #f5f5f5;
 			}
 			
-			div.comment-box-title {
-				color: #4c4c4c;
-				font-size: 13;
-				font-weight: bold;
-				margin-bottom: 10px;
-				text-shadow: 0px 1px #ffffff;
-			}
-			
-			div.comment-box-details {
+			div.comment-box-stars {
+				margin: 20px 0px 10px 0px;
 				color: #4c4c4c;
 				font-size: 12;
 				text-shadow: 0px 1px #ffffff;
 			}
 			
-			div.comment-box-review {
-				color: #4c4c4c;
-				font-size: 13;
-				margin-top: 10px;
-				text-shadow: 0px 1px #ffffff;
-			}
-			
+			img.app-icon {
+				width: 38px;
+				height: 38px;
+				border-radius: 7px;
+				-webkit-border-radius: 7px;
+				-moz-border-radius: 7px;
+			}			
+
 			img.star-full {
 				width: 12px;
 				height: 13px;
@@ -190,44 +148,15 @@ DEALINGS IN THE SOFTWARE.
 				vertical-align: text-bottom;
 				margin-right: 1px;
 			}
-			
-			div.version {
-				color: #b0b0b0;
-				font-size: 13;
-				font-weight: 700;
-				position: absolute;
-				top: 5px;
-				right: 5px;
-				text-shadow: 0px 1px #ffffff;
-			}
-			
-			a.comment-box-author {
-				text-decoration: none;
-				color: #4c4c4c;
-			}
+
 			
 		</STYLE>
 	</HEAD>
 	<BODY>
-		<DIV class="app-header">
-			<TABLE WIDTH="100%" cellpadding="0" cellspacing="0">
-				<TR>
-					<TD VALIGN="top" ALIGN="center" WIDTH="77">
-						<IMG class="app-icon" src="<?= $appIcon; ?>">
-					</TD>
-					<TD WIDTH="10"></TD>
-					<TD VALIGN="top">
-						<DIV class="app-title"><?= $appName; ?></DIV>
-						<DIV class="app-developer"><?= $appDeveloper; ?></DIV>
-						<DIV class="app-rating"><?= htmlForStars($appCurrentStars, true); ?> (<?= number_format($appCurrentRatings); ?>)</DIV>
-						<DIV class="app-rankings"><?= $appCategoryName; ?> <SPAN class="app-ranking-value">#<?= $appRankCategory; ?></SPAN>,  Grossing <SPAN class="app-ranking-value">#<?= $appRankCategoryGrossing; ?></SPAN></DIV>
-					</TD>
-				</TR>
-			</TABLE>
-		</DIV>
-		<DIV class="app-header-shadow"></DIV>
+
 	
 <?php
+$userName = htmlentities($_GET["username"]);
 for ($x = 0; $x < sizeof($arrReviews); $x++) {
 	$review = $arrReviews[$x];
 	if ($x % 2 == 0) {
@@ -236,26 +165,38 @@ for ($x = 0; $x < sizeof($arrReviews); $x++) {
 		$boxType = "comment-box-odd";
 	}
 	$commentNumber = $x + 1;
+	$appName = htmlentities($review["app_name"]);
+	$title = htmlentities($review["title"]);
+	$reviewComment = htmlentities($review["review"]);
+	$appIcon = $review["app_icon"];
+	$appDeveloper = htmlentities($review["developer_name"]);
+	$reviewDate = htmlentities($review["date_string"]);
 	$reviewComment = str_replace("\n", "<BR>", htmlentities($review["review"]));
-	$reviewUserName = htmlentities($review["user_name"]);
+	$reviewUserName = htmlentities($_GET["username"]);
 	$reviewUserNameEncoded = urlencode($review["user_name"]);
+	$urlAPP = "example.php?id=".urlencode($review["app_id"]);
 	$htmlStars = htmlForStars($review["stars"]);
 	
 $HTML = <<<HTML
 	<DIV CLASS="comment-box">
-		<DIV CLASS="version">
-			v{$review["version"]}
-		</DIV>
 		<DIV CLASS="{$boxType}">
-			<DIV CLASS="comment-box-title">
-				{$commentNumber}. {$review["title"]}
+			<TABLE width="100%" cellpadding="0" cellspacing="0">
+				<TR>
+					<TD width="38" valign="top">
+						<A href="{$urlAPP}" border="0"><IMG class="app-icon" src="{$appIcon}"></a>
+					</TD>
+					<TD width="10"></TD>
+					<TD valign="top">
+						<DIV class="app-title">{$appName}</DIV>
+						<DIV class="app-developer">{$appDeveloper}</DIV>
+					</TD>
+				</TR>
+			</TABLE>
+			<DIV class="comment-box-stars">
+			{$htmlStars} by {$userName} - {$reviewDate}
 			</DIV>
-			<DIV CLASS="comment-box-details">
-				{$htmlStars} by <a class="comment-box-author" href="reviews.php?id={$review["user_id"]}&username={$reviewUserNameEncoded}">{$reviewUserName}</a> - {$review["date_string"]}
-			</DIV>
-			<DIV CLASS="comment-box-review">
-				{$reviewComment}
-			</DIV>		
+			<DIV class="comment-box-title">{$title}</DIV>
+			<DIV class="comment-box-review">{$reviewComment}</DIV>
 		</DIV>
 	</DIV>
 	<DIV STYLE="height: 1px; background-color: #d2d2d2"></DIV>

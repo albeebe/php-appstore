@@ -37,7 +37,7 @@ class APPSTORE {
 	protected $_appRankCategoryGrossing;
 	
 /* ------------------------------------------------------------------- */
-	public function APPSTORE($appID) {
+	public function APPSTORE($appID = "") {
 		/*
 		
 		Initialize the class
@@ -280,6 +280,72 @@ class APPSTORE {
 	
 
 /* ------------------------------------------------------------------- */
+	public function userReviewsForPage($userID, $page = 0) {
+		/*
+		
+		Returns the reviews a user has left for a specified page.  The first page is 0
+		
+		*/
+		
+		// Download the users reviews
+		$page++;
+		$url = "http://itunes.apple.com//WebObjects/MZStore.woa/wa/allUserReviewsForReviewerFragment?userProfileId=".$userID."&page=".$page."&sort=14";
+		$ch = curl_init();
+	    curl_setopt( $ch, CURLOPT_USERAGENT, "iTunes/10.5 (Macintosh; U; Mac OS X 10.6)");
+	    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('X-Apple-Store-Front: 143441-1,12'));
+	    curl_setopt( $ch, CURLOPT_URL, $url);
+	    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true);
+	    curl_setopt( $ch, CURLOPT_ENCODING, "");
+	    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt( $ch, CURLOPT_AUTOREFERER, true);
+	    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false);
+	    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30);
+	    curl_setopt( $ch, CURLOPT_TIMEOUT, 30);
+	    curl_setopt( $ch, CURLOPT_MAXREDIRS, 10);
+	    $response = curl_exec($ch); 
+	    curl_close ($ch);
+	    
+	    // Parse the users reviews
+	    $domdocument = new DOMDocument();
+	    @$domdocument->loadHTML($response);
+	    $domPath = new DOMXPath($domdocument);
+	    $domReviews = $domPath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' customer-review ')]");
+		$arrReviews = array();
+		foreach ($domReviews as $domReview) {
+			$arrReview = array();
+			$arrReview["app_name"] = trim($domReview->getElementsByTagName('div')->item(2)->getAttribute("aria-label"));
+			$arrReview["app_id"] = trim($domReview->getElementsByTagName('button')->item(0)->getAttribute("adam-id"));
+			$arrReview["app_icon"] = trim($domReview->getElementsByTagName('img')->item(0)->getAttribute("src-swap-high-dpi"));
+			$arrReview["developer_name"] = trim($domReview->getElementsByTagName('a')->item(2)->nodeValue);
+			$arrReview["developer_id"] = $this->parseDeveloperID($domReview->getElementsByTagName('a')->item(2)->getAttribute("href"));
+			$arrReview["review"] = trim($domReview->getElementsByTagName('p')->item(0)->nodeValue);
+			$arrReview["title"] = trim($domReview->getElementsByTagName('div')->item(9)->nodeValue);
+			if ($domReview->getElementsByTagName('div')->length == 15) {
+				$arrReview["stars"] = $this->parseStars($domReview->getElementsByTagName('div')->item(11)->getAttribute("aria-label"));
+				$arrReview["date_string"] = trim($domReview->getElementsByTagName('div')->item(13)->nodeValue, " \n\r\t");
+			} else {
+				$arrReview["stars"] = $this->parseStars($domReview->getElementsByTagName('div')->item(12)->getAttribute("aria-label"));
+				$arrReview["date_string"] = trim($domReview->getElementsByTagName('div')->item(14)->nodeValue, " \n\r\t");
+			}
+			$arrReview["date_epoch"] = strtotime($arrReview["date_string"]);
+			array_push($arrReviews, $arrReview);
+/*
+			$x = 0;
+			foreach ($domReview->getElementsByTagName('a') as $blah) {
+				$x++;
+				print $x." = ".$blah->getAttribute("href")."\n";
+				//print $x." = ".$blah->nodeValue."\n";
+			}
+*/
+		}
+
+	    return $arrReviews;
+	}
+	
+	
+	
+	
+/* ------------------------------------------------------------------- */
 	public function ranksForCategory($categoryID = null) {
 		/*
 		
@@ -435,6 +501,22 @@ class APPSTORE {
 		$name = $results[1];
 		$id = $results[2];
 		return array($name, $id);
+	}
+	
+	
+	
+
+/* ------------------------------------------------------------------- */		
+	private function parseDeveloperID($string) {
+		/*
+		
+		Parses out the developer ID and returns it
+		
+		*/
+		
+		
+		preg_match("/id(.*)/i", $string, $results);
+		return $results[1];
 	}
 	
 	
