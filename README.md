@@ -2,12 +2,13 @@ php-appstore
 ===================
 
 PHP class with a bunch of functions to retrieve app ratings from the App Store
+<a href="http://twitter.com/albeebe">@albeebe</a>
 
 <h1>Uses </h1>
 
-I created this script so i could keep up to date on my apps reviews.<BR><BR>You can also get the apps name, the developer name, stars for the current version, stars for all versions, total number of ratings for the current version, and total number of ratings for all versions.
+Armed with nothing more then an App ID, you can pull a ton of information about the app from the App Store.  Reviews, ratings, app details, ranking information and more!
 
-<h1>Example </h1>
+<h1>Example.php </h1>
 
 <PRE>
 include ("appstore.inc.php");
