@@ -57,7 +57,7 @@ for ($x = 0; $x < 5; $x++) {
 
 Here is a screenshot of example_user.php running on an iPhone, with SirGerman3 set as the userID
 
-<IMG STYLE="border:1px solid black" SRC="http://i50.tinypic.com/nns61e.png" WIDTH="320" HEIGHT="568">
+<IMG STYLE="border:1px solid black" SRC="http://i46.tinypic.com/333vn9l.png" WIDTH="320" HEIGHT="568">
 
 <h1>License</h1>
 The MIT License
