@@ -3,8 +3,6 @@ php-appstore
 
 PHP class with a bunch of functions to retrieve app details, ratings, reviews and rankings from the App Store
 
-<BR><BR>
-
 Questions/Comments? Follow me on Twitter <a href="http://twitter.com/albeebe">@albeebe</a>
 
 <h1>Uses </h1>
