@@ -43,7 +43,11 @@ DEALINGS IN THE SOFTWARE.
 	$appTotalRatings = $_APPSTORE->appTotalRatings();
 	$appCurrentStars = $_APPSTORE->appCurrentStars();
 	$appCurrentRatings = $_APPSTORE->appCurrentRatings();
-	
+	$appCategoryName = $_APPSTORE->appCategoryName();
+	$appCategoryID = $_APPSTORE->appCategoryID();
+	$appRankCategory = $_APPSTORE->appRankCategory();
+	$appRankCategoryGrossing = $_APPSTORE->appRankCategoryGrossing();
+	 
 	$appName = htmlentities($appName);
 	$appDeveloper = htmlentities($appDeveloper);
 ?>
@@ -105,6 +109,19 @@ DEALINGS IN THE SOFTWARE.
 				font-size: 11px;
 			}
 			
+			div.app-rankings {
+				margin-top: 10px;
+				color: #646464;
+				font-size: 11px;
+				text-shadow: 0px 1px #ffffff;
+			}
+			
+			span.app-ranking-value {
+				color: #6a6a6a;
+				font-weight: bold;
+				font-size: 11px;
+			}
+			
 			div.comment-box {	
 				position: relative;
 			}
@@ -129,7 +146,7 @@ DEALINGS IN THE SOFTWARE.
 			
 			div.comment-box-details {
 				color: #4c4c4c;
-				font-size: 13;
+				font-size: 12;
 				text-shadow: 0px 1px #ffffff;
 			}
 			
@@ -198,8 +215,8 @@ DEALINGS IN THE SOFTWARE.
 					<TD VALIGN="top">
 						<DIV class="app-title"><?= $appName; ?></DIV>
 						<DIV class="app-developer"><?= $appDeveloper; ?></DIV>
-						<DIV class="app-rating"><?= htmlForStars($appCurrentStars, true); ?> (<?= $appCurrentRatings; ?>)</DIV>
-						
+						<DIV class="app-rating"><?= htmlForStars($appCurrentStars, true); ?> (<?= number_format($appCurrentRatings); ?>)</DIV>
+						<DIV class="app-rankings"><?= $appCategoryName; ?> <SPAN class="app-ranking-value">#<?= $appRankCategory; ?></SPAN>,  Grossing <SPAN class="app-ranking-value">#<?= $appRankCategoryGrossing; ?></SPAN></DIV>
 					</TD>
 				</TR>
 			</TABLE>

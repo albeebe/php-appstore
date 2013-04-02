@@ -31,6 +31,10 @@ class APPSTORE {
 	protected $_appTotalRatings;
 	protected $_appCurrentStars;
 	protected $_appCurrentRatings;
+	protected $_appCategoryName;
+	protected $_appCategoryID;
+	protected $_appRankCategory;
+	protected $_appRankCategoryGrossing;
 	
 /* ------------------------------------------------------------------- */
 	public function APPSTORE($appID) {
@@ -166,6 +170,92 @@ class APPSTORE {
 
 
 /* ------------------------------------------------------------------- */
+	public function appCategoryName() {
+		/*
+		
+		Returns the apps category name
+		
+		*/
+		
+		if (strlen($this->_appCategoryName) == 0) {
+			$this->reviewsForPage(0);
+		}
+		
+		switch ($this->_appCategoryID) {
+			case 1:
+				return "";
+				break;
+				
+			default:
+				return ucwords($this->_appCategoryName);
+		}
+	}
+
+
+
+
+/* ------------------------------------------------------------------- */
+	public function appCategoryID() {
+		/*
+		
+		Returns the apps category ID
+		
+		*/
+		
+		if (strlen($this->_appCategoryID) == 0) {
+			$this->reviewsForPage(0);
+		}
+		return $this->_appCategoryID;
+	}
+
+
+
+
+/* ------------------------------------------------------------------- */
+	public function appRankCategory() {
+		/*
+		
+		Returns the apps rank in its category
+		
+		*/
+		
+		if (strlen($this->_appRankCategory) == 0) {
+			$this->ranksForCategory($this->_appCategoryID);
+		}
+		
+		if ($this->_appRankCategory == "") {
+			return "100+";
+		} else {
+			return $this->_appRankCategory;
+		}
+	}
+
+
+
+
+/* ------------------------------------------------------------------- */
+	public function appRankCategoryGrossing() {
+		/*
+		
+		Returns the apps grossing rank in its category
+		
+		*/
+		
+		if (strlen($this->_appRankCategoryGrossing) == 0) {
+			$this->ranksForCategory($this->_appCategoryID);
+		}
+		
+		if ($this->_appRankCategoryGrossing == "") {
+			return "100+";
+		} else {
+			return $this->_appRankCategoryGrossing;
+		}
+	}
+
+
+
+
+/* ------------------------------------------------------------------- */
 	public function reviewsForPage($page) {
 		/*
 		
@@ -173,7 +263,8 @@ class APPSTORE {
 		
 		*/
 		
-		$xmlContent = $this->downloadContentForPage($page);
+
+		$xmlContent = $this->downloadContentForPage($page);		
 		$this->_appDeveloper = (string)$xmlContent->Path->PathElement[1]["displayName"];
 		$this->_appName = (string)$xmlContent->Path->PathElement[2]["displayName"];
 		$this->_appIcon = (string)$xmlContent->View->ScrollView->VBoxView->View->MatrixView->VBoxView[0]->HBoxView[0]->VBoxView[0]->VBoxView->MatrixView->GotoURL->View->PictureView["url"];
@@ -181,7 +272,93 @@ class APPSTORE {
 		$this->_appTotalRatings = $this->parseRatings((string)$xmlContent->View->ScrollView->VBoxView->View->MatrixView->VBoxView[0]->HBoxView[0]->VBoxView[1]->VBoxView->View->View->View->VBoxView->Test[0]->VBoxView[0]->HBoxView->VBoxView[2]->TextView->SetFontStyle);
 		$this->_appCurrentStars = $this->parseStars((string)$xmlContent->View->ScrollView->VBoxView->View->MatrixView->VBoxView[0]->HBoxView[0]->VBoxView[1]->VBoxView->View->View->View->VBoxView->Test[1]->VBoxView[0]->HBoxView->VBoxView[2]->HBoxView["alt"]);
 		$this->_appCurrentRatings = $this->parseRatings((string)$xmlContent->View->ScrollView->VBoxView->View->MatrixView->VBoxView[0]->HBoxView[0]->VBoxView[1]->VBoxView->View->View->View->VBoxView->Test[1]->VBoxView[1]->HBoxView->VBoxView[2]->TextView->SetFontStyle);
+		list ($this->_appCategoryName, $this->_appCategoryID) = $this->parseCategory((string)$xmlContent->Path->PathElement[0]);
 		return $this->generateReviews($xmlContent->View->ScrollView->VBoxView->View->MatrixView->VBoxView[0]->VBoxView);
+	}
+	
+	
+	
+
+/* ------------------------------------------------------------------- */
+	public function ranksForCategory($categoryID = null) {
+		/*
+		
+		Download and process the how the app ranks in its category (paid, free, grossing)
+		
+		*/
+		
+		if (!$categoryID) $categoryID = $this->appCategoryID();
+		
+		// Download the paid ranking
+		$xmlContentPaid = $this->downloadRanksForCategory("paid", $categoryID);
+		$rankCategory = "";
+		for ($x = 0; $x < sizeof($xmlContentPaid->entry); $x++) {
+			$xmlApp = $xmlContentPaid->entry[$x];
+			if(stristr((string)$xmlApp->id, "id".$this->_appID)) {
+				$rankCategory = ($x+1);
+				break;
+			}
+		}
+		
+		// Download the free ranking if no paid ranking was found
+		if ($rankCategory == "") {
+			$xmlContentPaid = $this->downloadRanksForCategory("free", $categoryID);
+			for ($x = 0; $x < sizeof($xmlContentPaid->entry); $x++) {
+				$xmlApp = $xmlContentPaid->entry[$x];
+				if(stristr((string)$xmlApp->id, "id".$this->_appID)) {
+					$rankCategory = ($x+1);
+					break;
+				}
+			}
+		}
+		
+		// Download the grossing ranking
+		$xmlContentPaid = $this->downloadRanksForCategory("grossing", $categoryID);
+		$rankGrossing = "";
+		for ($x = 0; $x < sizeof($xmlContentPaid->entry); $x++) {
+			$xmlApp = $xmlContentPaid->entry[$x];
+			if(stristr((string)$xmlApp->id, "id".$this->_appID)) {
+				$rankGrossing = ($x+1);
+				break;
+			}
+		}
+		
+		// Store the rankings
+		if ($categoryID == $this->appCategoryID()) {
+			$this->_appRankCategory = $rankCategory;
+			$this->_appRankCategoryGrossing = $rankGrossing;
+		}
+		
+		return array("category"=>$rankCategory, "grossing"=>$rankGrossing);
+	}
+	
+	
+	
+	
+/* ------------------------------------------------------------------- */
+ 	private function downloadRanksForCategory($type, $categoryID) {
+ 		/*
+ 		
+ 		Returns the ranks for the specificied category type and ID
+ 		
+ 		*/
+ 		
+ 		$url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/top".$type."applications/sf=143441/limit=100/genre=".$categoryID."/xml";
+	 	$ch = curl_init();
+	    curl_setopt( $ch, CURLOPT_USERAGENT, "iTunes/10.5 (Macintosh; U; Mac OS X 10.6)");
+	    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('X-Apple-Store-Front: 143441-1'));
+	    curl_setopt( $ch, CURLOPT_URL, $url);
+	    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true);
+	    curl_setopt( $ch, CURLOPT_ENCODING, "");
+	    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true);
+	    curl_setopt( $ch, CURLOPT_AUTOREFERER, true);
+	    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false);
+	    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 30);
+	    curl_setopt( $ch, CURLOPT_TIMEOUT, 30);
+	    curl_setopt( $ch, CURLOPT_MAXREDIRS, 10);
+	    $response = curl_exec($ch); 
+	    curl_close ($ch);
+	    return new SimpleXMLElement($response);
 	}
 	
 	
@@ -210,7 +387,6 @@ class APPSTORE {
 	    curl_setopt( $ch, CURLOPT_MAXREDIRS, 10);
 	    $response = curl_exec($ch); 
 	    curl_close ($ch);
-	    //print $response; exit;
 	    return new SimpleXMLElement($response);
 	}	
 
@@ -245,7 +421,25 @@ class APPSTORE {
 	
 	
 	
+
+/* ------------------------------------------------------------------- */		
+	private function parseCategory($string) {
+		/*
+		
+		Parses out the category name and ID and returns them
+		
+		*/
+		
+		
+		preg_match("/.*ios-(.*)\/id(.*)\?/i", $string, $results);
+		$name = $results[1];
+		$id = $results[2];
+		return array($name, $id);
+	}
 	
+	
+	
+		
 /* ------------------------------------------------------------------- */		
 	private function parseVersionDate($string) {
 		/*
