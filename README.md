@@ -7,9 +7,9 @@ Questions/Comments? Follow me on Twitter <a href="http://twitter.com/albeebe">@a
 
 <h1>Uses </h1>
 
-Armed with nothing more then an App ID, you can pull a ton of information about the app from the App Store.  Reviews, ratings, app details, ranking information and more!
+Armed with nothing more then an App ID, you can pull a ton of information about the app from the App Store.  Reviews, ratings, app details, ranking information and more!  With a User ID you can also retrieve a users rating history!
 
-<h1>Example.php </h1>
+<h1>example_app.php </h1>
 
 <PRE>
 include ("appstore.inc.php");
@@ -31,9 +31,33 @@ $appRankCategory = $_APPSTORE->appRankCategory();
 $appRankCategoryGrossing = $_APPSTORE->appRankCategoryGrossing();
 </PRE>
 
-Here is a screenshot of example.php running on an iPhone, with Angry Birds set as the appID
+Here is a screenshot of example_app.php running on an iPhone, with Angry Birds set as the appID
 
-<IMG STYLE="border:1px solid black" SRC="http://i46.tinypic.com/2dqvqte.png" WIDTH="320" HEIGHT="568">
+<IMG STYLE="border:1px solid black" SRC="http://i47.tinypic.com/mbptm9.png" WIDTH="320" HEIGHT="568">
+
+<h1>example_user.php </h1>
+
+<PRE>
+include ("appstore.inc.php");
+
+$userID = "243443889"; // SirGerman3
+	
+// Download the users 30 most recent reviews
+$_APPSTORE = new APPSTORE();
+$arrReviews = array();
+for ($x = 0; $x < 5; $x++) {
+	$arrReviewPage = $_APPSTORE->userReviewsForPage($userID, $x);
+	if (sizeof($arrReviewPage) == 0) {
+		break;
+	} else {
+		$arrReviews = array_merge($arrReviews, $arrReviewPage);
+	}
+}
+</PRE>
+
+Here is a screenshot of example_user.php running on an iPhone, with SirGerman3 set as the userID
+
+<IMG STYLE="border:1px solid black" SRC="http://i50.tinypic.com/nns61e.png" WIDTH="320" HEIGHT="568">
 
 <h1>License</h1>
 The MIT License
