@@ -33,7 +33,7 @@ $appRankCategoryGrossing = $_APPSTORE->appRankCategoryGrossing();
 
 Here is a screenshot of example.php running on an iPhone, with Angry Birds set as the appID
 
-<IMG STYLE="border:1px solid black" SRC="http://i48.tinypic.com/124zj8w.png" WIDTH="320" HEIGHT="568">
+<IMG STYLE="border:1px solid black" SRC="http://i46.tinypic.com/2dqvqte.png" WIDTH="320" HEIGHT="568">
 
 <h1>License</h1>
 The MIT License
