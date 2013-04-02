@@ -11,10 +11,25 @@ I created this script so i could keep up to date on my apps reviews.<BR><BR>You 
 
 <PRE>
 include ("appstore.inc.php");
+
 $appID = "577499909"
+
 $_APPSTORE = new APPSTORE($appID);
-print_r($_APPSTORE->reviewsForPage(0));
+$arrReviews = $_APPSTORE->reviewsForPage(0);
+$appName = $_APPSTORE->appName();
+$appIcon = $_APPSTORE->appIcon();
+$appDeveloper = $_APPSTORE->appDeveloper();
+$appTotalStars = $_APPSTORE->appTotalStars();
+$appTotalRatings = $_APPSTORE->appTotalRatings();
+$appCurrentStars = $_APPSTORE->appCurrentStars();
+$appCurrentRatings = $_APPSTORE->appCurrentRatings();
+$appCategoryName = $_APPSTORE->appCategoryName();
+$appCategoryID = $_APPSTORE->appCategoryID();
+$appRankCategory = $_APPSTORE->appRankCategory();
+$appRankCategoryGrossing = $_APPSTORE->appRankCategoryGrossing();
 </PRE>
+
+<IMG SRC="http://i48.tinypic.com/124zj8w.png"> WIDTH="320" HEIGHT="568">
 
 <h1>License</h1>
 The MIT License
