@@ -251,7 +251,7 @@ $HTML = <<<HTML
 				{$commentNumber}. {$review["title"]}
 			</DIV>
 			<DIV CLASS="comment-box-details">
-				{$htmlStars} by <a class="comment-box-author" href="reviews.php?id={$review["user_id"]}&username={$reviewUserNameEncoded}">{$reviewUserName}</a> - {$review["date_string"]}
+				{$htmlStars} by <a class="comment-box-author" href="example_user.php?id={$review["user_id"]}&username={$reviewUserNameEncoded}">{$reviewUserName}</a> - {$review["date_string"]}
 			</DIV>
 			<DIV CLASS="comment-box-review">
 				{$reviewComment}

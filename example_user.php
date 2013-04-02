@@ -174,7 +174,7 @@ for ($x = 0; $x < sizeof($arrReviews); $x++) {
 	$reviewComment = str_replace("\n", "<BR>", htmlentities($review["review"]));
 	$reviewUserName = htmlentities($_GET["username"]);
 	$reviewUserNameEncoded = urlencode($review["user_name"]);
-	$urlAPP = "example.php?id=".urlencode($review["app_id"]);
+	$urlAPP = "example_app.php?id=".urlencode($review["app_id"]);
 	$htmlStars = htmlForStars($review["stars"]);
 	
 $HTML = <<<HTML
