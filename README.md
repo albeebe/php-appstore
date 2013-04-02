@@ -1,8 +1,11 @@
 php-appstore
 ===================
 
-PHP class with a bunch of functions to retrieve app ratings from the App Store
-<a href="http://twitter.com/albeebe">@albeebe</a>
+PHP class with a bunch of functions to retrieve app details, ratings, reviews and rankings from the App Store
+
+<BR><BR>
+
+Questions/Comments? Follow me on Twitter <a href="http://twitter.com/albeebe">@albeebe</a>
 
 <h1>Uses </h1>
 
@@ -13,7 +16,7 @@ Armed with nothing more then an App ID, you can pull a ton of information about 
 <PRE>
 include ("appstore.inc.php");
 
-$appID = "577499909" // Angry Birds
+$appID = "577499909"; // Angry Birds
 
 $_APPSTORE = new APPSTORE($appID);
 $arrReviews = $_APPSTORE->reviewsForPage(0);
