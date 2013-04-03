@@ -45,7 +45,7 @@ $userID = "243443889"; // SirGerman3
 // Download the users 30 most recent reviews
 $_APPSTORE = new APPSTORE();
 $arrReviews = array();
-for ($x = 0; $x < 5; $x++) {
+for ($x = 0; $x &lt; 5; $x++) {
 	$arrReviewPage = $_APPSTORE->userReviewsForPage($userID, $x);
 	if (sizeof($arrReviewPage) == 0) {
 		break;
