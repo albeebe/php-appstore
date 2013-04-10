@@ -54,7 +54,7 @@ DEALINGS IN THE SOFTWARE.
 <HTML>
 	<HEAD>
 		<TITLE><?= $appName; ?></TITLE>
-		<META name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="viewport" content="user-scalable=0, initial-scale=1.0" />
 		<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<STYLE media="screen" type="text/css">
