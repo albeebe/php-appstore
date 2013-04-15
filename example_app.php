@@ -33,8 +33,12 @@ DEALINGS IN THE SOFTWARE.
 	$appID = $_GET["id"];
 	if (strlen($appID) == 0) $appID = "577499909";
 	
+	// Set the country we want to get details for
+	$country = $_GET["country"];
+	if (strlen($country) == 0) $country = "US";
+	
 	// Download the most recent reviews
-	$_APPSTORE = new APPSTORE($appID);
+	$_APPSTORE = new APPSTORE($appID, $country);
 	$arrReviews = $_APPSTORE->reviewsForPage(0);
 	$appName = $_APPSTORE->appName();
 	$appIcon = $_APPSTORE->appIcon();
