@@ -15,8 +15,9 @@ Armed with nothing more then an App ID, you can pull a ton of information about 
 include ("appstore.inc.php");
 
 $appID = "577499909"; // Angry Birds
+$country = "US"; // App Store to get data from
 
-$_APPSTORE = new APPSTORE($appID);
+$_APPSTORE = new APPSTORE($appID, $country);
 $arrReviews = $_APPSTORE->reviewsForPage(0);
 $appName = $_APPSTORE->appName();
 $appIcon = $_APPSTORE->appIcon();
