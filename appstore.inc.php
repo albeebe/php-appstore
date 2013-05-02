@@ -87,6 +87,61 @@ class APPSTORE {
 
 
 /* ------------------------------------------------------------------- */
+	public function appAvailableCountries() {
+		/*
+		
+		Searches all the international App Stores and returns an array of countries where the app is available
+		
+		*/
+		
+
+		// Array of countries that have an App Store
+		$arrCountries = array("AL","DZ","AO","AI","AG","AR","AM","AU","AT","AZ","BS","BH","BD","BB",
+							  "BY","BE","BZ","BJ","BM","BT","BO","BW","BR","BN","BG","BF","KH","CM",
+							  "CA","CV","KY","TD","CL","CN","CO","CG","CR","CI","HR","CY","CZ","DK",
+							  "DM","DO","EC","EG","SV","EE","ET","FJ","FI","FR","GM","DE","GH","GR",
+							  "GD","GT","GW","GY","HN","HK","HU","IS","IN","ID","IE","IL","IT","JM",
+							  "JP","JO","KZ","KE","KR","KW","KG","LA","LV","LB","LR","LY","LI","LT",
+							  "LU","MO","MK","MG","MW","MY","MV","ML","MT","MR","MU","MX","FM","MD",
+							  "MN","MS","MZ","MM","NA","NP","NL","NZ","NI","NE","NG","NO","OM","PK",
+							  "PW","PS","PA","PG","PY","PE","PH","PL","PT","QA","RO","RU","KN","LC",
+							  "VC","ST","SA","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK",
+							  "SR","SZ","SE","CH","TW","TJ","TZ","TH","TT","TN","TR","TM","TC","UG",
+							  "UA","AE","GB","US","UY","UZ","VE","VN","VG","YE","ZW");
+
+		// Generate the API URLs
+		$arrAppStores = array();
+		foreach ($arrCountries as $country) {
+			array_push($arrAppStores, array("country"=>$country, "url"=>"http://itunes.apple.com/lookup?id=".$this->_appID."&country=".$country));
+		}
+		
+		// Query all the App Store URLs
+		$curl_array = array();
+		$ch = curl_multi_init();
+		foreach($arrAppStores as $index=>$appStore) {
+			$curl_array[$index] = curl_init($appStore["url"]);
+			curl_setopt($curl_array[$index], CURLOPT_RETURNTRANSFER, 1);
+			curl_multi_add_handle($ch, $curl_array[$index]);
+		}
+		do { curl_multi_exec($ch, $exec); } while($exec > 0);
+		
+		// Process the responses
+		$arrAvailableCountries = array();
+		foreach($arrAppStores as $index => $appStore) {
+			$response = curl_multi_getcontent($curl_array[$index]);
+			$arrResponse = json_decode($response, true);
+			if ($arrResponse["resultCount"] > 0) {
+				array_push($arrAvailableCountries, $appStore["country"]);
+			}
+		}
+
+		return $arrAvailableCountries;
+	}
+	
+	
+	
+	
+/* ------------------------------------------------------------------- */
 	public function appDeveloper() {
 		/*
 		
@@ -743,7 +798,7 @@ class APPSTORE {
 		} else {
 			$this->throwException("Unable to locate storefront for country ".$country);
 		}
-	}
+	}	
 	
 	
 	
