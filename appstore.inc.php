@@ -109,6 +109,7 @@ class APPSTORE {
 							  "SR","SZ","SE","CH","TW","TJ","TZ","TH","TT","TN","TR","TM","TC","UG",
 							  "UA","AE","GB","US","UY","UZ","VE","VN","VG","YE","ZW");
 
+
 		// Generate the API URLs
 		$arrAppStores = array();
 		foreach ($arrCountries as $country) {
@@ -524,6 +525,7 @@ class APPSTORE {
 		
 		*/
 		
+
 		$arrReviews = array();
 		for ($x = 0; $x < sizeof($xmlContent->VBoxView); $x++) {
 			$arrReview = array();
@@ -587,7 +589,7 @@ class APPSTORE {
 		
 		*/
 		
-		$arrValues = explode("-", $string);
+		$arrValues = explode(" - ", $string);
 		$version = preg_replace("/[^0-9.]/", "", trim($arrValues[1]));
 		$date = trim($arrValues[2]);
 		return array($version, $date);
@@ -778,7 +780,7 @@ class APPSTORE {
 		$arrCountries["GY"] = array("storefront"=>"143553,12", "country"=>"Guyana");
 		$arrCountries["HN"] = array("storefront"=>"143510-2,12", "country"=>"Honduras");
 		$arrCountries["JM"] = array("storefront"=>"143511,12", "country"=>"Jamaica");
-		$arrCountries["MX"] = array("storefront"=>"143468,12", "country"=>"México");
+		$arrCountries["MX"] = array("storefront"=>"143468,12", "country"=>"Mexico");
 		$arrCountries["MS"] = array("storefront"=>"143547,12", "country"=>"Montserrat");
 		$arrCountries["NI"] = array("storefront"=>"143512-2,12", "country"=>"Nicaragua");
 		$arrCountries["PA"] = array("storefront"=>"143485-2,12", "country"=>"Panama");
