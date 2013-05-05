@@ -374,10 +374,10 @@ class APPSTORE {
 			$arrReview["app_name"] = trim($domReview->getElementsByTagName('div')->item(2)->getAttribute("aria-label"));
 			$arrReview["app_id"] = trim($domReview->getElementsByTagName('button')->item(0)->getAttribute("adam-id"));
 			$arrReview["app_icon"] = trim($domReview->getElementsByTagName('img')->item(0)->getAttribute("src-swap-high-dpi"));
-			$arrReview["developer_name"] = trim($domReview->getElementsByTagName('a')->item(2)->nodeValue);
+			$arrReview["developer_name"] = utf8_decode(trim($domReview->getElementsByTagName('a')->item(2)->nodeValue));
 			$arrReview["developer_id"] = $this->parseDeveloperID($domReview->getElementsByTagName('a')->item(2)->getAttribute("href"));
-			$arrReview["review"] = trim($domReview->getElementsByTagName('p')->item(0)->nodeValue);
-			$arrReview["title"] = trim($domReview->getElementsByTagName('div')->item(9)->nodeValue);
+			$arrReview["review"] = utf8_decode(trim($domReview->getElementsByTagName('p')->item(0)->nodeValue));
+			$arrReview["title"] = utf8_decode(trim($domReview->getElementsByTagName('div')->item(9)->nodeValue));
 			if ($domReview->getElementsByTagName('div')->length == 15) {
 				$arrReview["stars"] = $this->parseStars($domReview->getElementsByTagName('div')->item(11)->getAttribute("aria-label"));
 				$arrReview["date_string"] = trim($domReview->getElementsByTagName('div')->item(13)->nodeValue, " \n\r\t");
@@ -387,14 +387,6 @@ class APPSTORE {
 			}
 			$arrReview["date_epoch"] = strtotime($arrReview["date_string"]);
 			array_push($arrReviews, $arrReview);
-/*
-			$x = 0;
-			foreach ($domReview->getElementsByTagName('a') as $blah) {
-				$x++;
-				print $x." = ".$blah->getAttribute("href")."\n";
-				//print $x." = ".$blah->nodeValue."\n";
-			}
-*/
 		}
 
 	    return $arrReviews;
@@ -473,7 +465,7 @@ class APPSTORE {
 	    curl_setopt( $ch, CURLOPT_HTTPHEADER, array('X-Apple-Store-Front: '.$this->storefrontForCountry($this->_country)));
 	    curl_setopt( $ch, CURLOPT_URL, $url);
 	    curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, true);
-	    curl_setopt( $ch, CURLOPT_ENCODING, "");
+	    curl_setopt( $ch, CURLOPT_ENCODING, "UTF-8");
 	    curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true);
 	    curl_setopt( $ch, CURLOPT_AUTOREFERER, true);
 	    curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -707,7 +699,7 @@ class APPSTORE {
 		$arrCountries["SE"] = array("storefront"=>"143456,12", "country"=>"Sweden");
 		$arrCountries["CH"] = array("storefront"=>"143459-2,12", "country"=>"Switzerland");
 		$arrCountries["TR"] = array("storefront"=>"143480,12", "country"=>"Turkey");
-		$arrCountries["UK"] = array("storefront"=>"143444,12", "country"=>"United Kingdom");
+		$arrCountries["GB"] = array("storefront"=>"143444,12", "country"=>"United Kingdom");
 		$arrCountries["RU"] = array("storefront"=>"143469,12", "country"=>"Russia");
 		$arrCountries["DZ"] = array("storefront"=>"143563,12", "country"=>"Algeria");
 		$arrCountries["AO"] = array("storefront"=>"143564,12", "country"=>"Angola");
